@@ -226,54 +226,52 @@ disp(canc);
 
 K_values = [3 5 20 50];
 
-figure;
-
 % Se analiza cada cantidad de armónicos.
 for ii = 1:length(K_values)
 
     Kr = K_values(ii);
 
-    % Se crea el vector de armónicos para este caso.
+    % -------------------------------------------------------------
+    % VECTOR DE ARMÓNICOS
+    % -------------------------------------------------------------
     kk = -Kr:Kr;
 
-
     % -------------------------------------------------------------
-    % CALCULO DE LOS COEFICIENTES PARA EL NUEVO NUMERO DE ARMÓNICOS
+    % CALCULO DE LOS COEFICIENTES
     % -------------------------------------------------------------
-
     Ck = A*D*(kk==0) + ...
          A*sinc(kk*D).*exp(-1j*pi*kk*D).*(kk~=0);
 
-    % Se asegura el valor de C0.
+    % Se asegura el valor correcto de C0.
     Ck(kk==0) = A*D;
-
 
     % -------------------------------------------------------------
     % RECONSTRUCCION DE LA SEÑAL
     % -------------------------------------------------------------
-
     xr = real(Ck*exp(1j*w0*kk'*t));
-
     % -------------------------------------------------------------
-    % GRAFICA DE LA RECONSTRUCCION
+    % GRAFICA INDIVIDUAL
     % -------------------------------------------------------------
-
-    subplot(length(K_values),1,ii);
-
-    % Señal original: azul.
-    % Señal reconstruida: rojo punteado.
-    plot(t*1e3,x,'b',t*1e3,xr,'r--');
-
+    figure;
+    
+    plot(t*1e3,x,'b','LineWidth',1.5);
+    hold on;
+    
+    plot(t*1e3,xr,'r','LineWidth',1.3);
+    
     grid on;
-
+    
+    xlabel('Tiempo [ms]');
+    ylabel('Amplitud');
+    
+    title(sprintf('Reconstrucción con K = %d - Fenómeno de Gibbs',Kr));
+    
+    legend('Señal original','Señal reconstruida');
+    
     ylim([-0.8 1.8]);
 
-    title(sprintf('Reconstruccion con K = %d',Kr));
 
 end
-
-% Título general para todas las gráficas.
-sgtitle('Reconstruccion y fenomeno de Gibbs');
 
 
 % -------------------------------------------------------------------------
@@ -452,5 +450,3 @@ legend('|C_k| continuo','|X[k]| DTFS');
 
 fprintf('\nError maximo Fourier continuo-DTFS = %.3e\n',...
     max(abs(Cc-Xc)));
-
-
